@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import classes from "./App.module.css";
 import axios from "axios";
+import Weather from "./Components/Weather";
 
 function App() {
   const [weatherInfo, setWeatherInfo] = useState(null);
@@ -33,7 +34,11 @@ function App() {
     fetchData();
   }, []);
 
-  return <main className={classes.container}>CONTENT</main>;
+  return (
+    <main className={classes.container}>
+      <Weather weatherInfo={weatherInfo} />
+    </main>
+  );
 }
 
 export default App;
