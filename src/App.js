@@ -5,6 +5,8 @@ import Weather from "./Components/Weather";
 
 function App() {
   const [weatherInfo, setWeatherInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchData = async () => {
     const key = "95662109ff51268dddd80880a65ffd09";
@@ -27,18 +29,20 @@ function App() {
           icon,
         });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => setError("Something went wrong!"));
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  return (
-    <main className={classes.container}>
-      <Weather weatherInfo={weatherInfo} />
-    </main>
-  );
+  let content;
+  if (loading) content = <p>Loading...</p>;
+  if (weatherInfo) content = <Weather weatherInfo={weatherInfo} />;
+  if (error) content = <p>{error}</p>;
+
+  return <main className={classes.container}>{content}</main>;
 }
 
 export default App;
