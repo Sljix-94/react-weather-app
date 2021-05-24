@@ -1,4 +1,4 @@
-import { useState, useEffect,useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import classes from "./App.module.css";
 import axios from "axios";
 import Weather from "./Components/Weather";
@@ -7,8 +7,7 @@ function App() {
   const [weatherInfo, setWeatherInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [unit,setUnit] = useState('metric');
- 
+
   const fetchWeatherData = useCallback(async (unit = "metric") => {
     const key = "95662109ff51268dddd80880a65ffd09";
     const url = `http://api.openweathermap.org/data/2.5/weather?q=Berlin&appid=${key}&units=${unit}`;
@@ -27,17 +26,14 @@ function App() {
           temperature,
           description,
           icon,
+          unit,
         });
       })
       .catch((error) => setError("Something went wrong!"));
     setLoading(false);
-  },[]);
+  }, []);
   const changeUnitHandler = () => {
-    setUnit((prevState)=>{
-      return prevState === 'metric' ? 'imperial' : 'metric'
-    })
-    
-    fetchWeatherData(unit === 'metric' ? 'imperial' : 'metric');
+    fetchWeatherData(weatherInfo.unit === "metric" ? "imperial" : "metric");
   };
 
   useEffect(() => {
@@ -48,7 +44,7 @@ function App() {
   if (loading) content = <p>Loading...</p>;
   if (weatherInfo)
     content = (
-      <Weather weatherInfo={weatherInfo} changeUnit={changeUnitHandler} unit = {unit}/>
+      <Weather weatherInfo={weatherInfo} changeUnit={changeUnitHandler} />
     );
   if (error) content = <p>{error}</p>;
 
