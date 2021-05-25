@@ -9,27 +9,28 @@ function App() {
   const [error, setError] = useState(null);
 
   const fetchWeatherData = useCallback(async (unit = "metric") => {
-    const key = "95662109ff51268dddd80880a65ffd09";
-    const url = `http://api.openweathermap.org/data/2.5/weather?q=Berlin&appid=${key}&units=${unit}`;
-    axios
-      .get(url)
-      .then((response) => {
-        const {
-          name,
-          main: { temp: temperature },
-          weather: [{ description }],
-          weather: [{ icon }],
-        } = response.data;
+    try {
+      const key = "95662109ff51268dddd80880a65ffd09";
+      const url = `http://api.openweathermap.org/data/2.5/weather?q=Berlin&appid=${key}&units=${unit}`;
 
-        setWeatherInfo({
-          name,
-          temperature,
-          description,
-          icon,
-          unit,
-        });
-      })
-      .catch((error) => setError("Something went wrong!"));
+      const response = await axios.get(url);
+      const {
+        name,
+        main: { temp: temperature },
+        weather: [{ description }],
+        weather: [{ icon }],
+      } = response.data;
+
+      setWeatherInfo({
+        name,
+        temperature,
+        description,
+        icon,
+        unit,
+      });
+    } catch (error) {
+      setError("Something went wrong!");
+    }
     setLoading(false);
   }, []);
   const changeUnitHandler = () => {
