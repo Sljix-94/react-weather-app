@@ -1,47 +1,62 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import classes from "./App.module.css";
 import axios from "axios";
 import Weather from "./Components/Weather";
 import Loading from "./UI/Loading";
 
+const url = process.env.REACT_APP_API_URL || "test.google.com";
+const key = process.env.REACT_APP_KEY;
+
 function App() {
-  const [weatherInfo, setWeatherInfo] = useState(null);
+  const [weatherInfo, setWeatherInfo] = useState({
+    name: "",
+    description: "",
+    temperature: null,
+    icon: "",
+    unit: "metric",
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const fetchWeatherData = useCallback(async (unit = "metric") => {
+  const fetchWeatherData = async () => {
     try {
-      const key = "95662109ff51268dddd80880a65ffd09";
-      const url = `http://api.openweathermap.org/data/2.5/weather?q=Berlin&appid=${key}&units=${unit}`;
-
-      const response = await axios.get(url);
+      const response = await axios.get(
+        `${url}?q=Berlin&appid=${key}&units=${weatherInfo.unit}`
+      );
       const {
         name,
         main: { temp: temperature },
-        weather: [{ description }],
-        weather: [{ icon }],
+        weather: [{ description, icon }],
       } = response.data;
 
-      setWeatherInfo({
-        name,
-        temperature,
-        description,
-        icon,
-        unit,
+      setWeatherInfo((prevState) => {
+        return {
+          ...prevState,
+          name,
+          description,
+          temperature,
+          icon,
+        };
       });
     } catch (error) {
       setError(true);
     }
     setLoading(false);
-  }, []);
+  };
 
   const changeUnitHandler = () => {
-    fetchWeatherData(weatherInfo.unit === "metric" ? "imperial" : "metric");
+    setWeatherInfo((prevState) => {
+      return {
+        ...prevState,
+        unit: prevState.unit === "metric" ? "imperial" : "metric",
+      };
+    });
   };
 
   useEffect(() => {
     fetchWeatherData();
-  }, [fetchWeatherData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weatherInfo.unit]);
 
   if (error)
     return <div className={classes.container}>Something went wrong!</div>;
