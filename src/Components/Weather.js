@@ -2,12 +2,15 @@ import classes from "./Weather.module.css";
 import propTypes from "prop-types";
 
 const Weather = (props) => {
-  const { name, description, icon, temperature, unit } = props.weatherInfo;
+  const {
+    weatherInfo: { name, description, icon, temperature, unit },
+    changeUnit,
+  } = props;
 
   return (
     <div className={classes.container}>
       <div className={classes.header}>
-        <h1 onClick={props.changeUnit}>Europe/{name}</h1>
+        <h1 onClick={changeUnit}>Europe/{name}</h1>
         <img src={`http://openweathermap.org/img/wn/${icon}.png`} alt="Icon" />
       </div>
       <div className={temperature}>
